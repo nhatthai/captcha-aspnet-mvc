@@ -1,0 +1,88 @@
+﻿@using CaptchaMvc.HtmlHelpers
+@model Captcha.Models.FeedbackModel
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>ASP.NET</h1>
+    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        @* @using (Html.BeginForm("Index", $"Captcha", new
+        {
+            enctype = "multipart/form-data",
+            id = "Captcha"
+        }))
+        {
+            @Html.Captcha("Refresh", "Enter Captcha Text", 5, "Is required field", true)
+            @Html.ValidationMessage("Captchaerror", new { @class = "text-danger" })
+            <p>
+                <input type="submit" value="Send" />
+            </p>
+
+        } *@
+        @using (Html.BeginForm("FeedbackForm", "Captcha"))
+        {
+            @Html.ValidationSummary(true)
+            @Html.AntiForgeryToken()
+
+        <fieldset>
+            <legend>Feedback </legend>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.EmailID)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.EmailID)
+                @Html.ValidationMessageFor(model => model.EmailID)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Query)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Query)
+                @Html.ValidationMessageFor(model => model.Query)
+            </div>
+            <div class="editor-label">
+                Captcha Image
+            </div>
+            <div class="editor-field">
+                <img src="@Url.Action("GetCaptchaImage","Captcha")" />
+
+                <input type="button" value="Audio" onclick="location.href='@Url.Action("GetCaptchaAudio","Captcha")'" />
+            </div>
+            <div class="editor-field">
+                <input type="text" name="CaptchaText" id="CaptchaText" value="@ViewBag.CaptchaText" />
+            </div>
+            <p>
+                <input type="submit" value="Create" />
+            </p>
+            <div>
+                @if (ViewBag.Message != null)
+                {
+                    <div style="border: 1px solid rgb(141, 27, 27); width:300px;padding: 5px;">
+                        @ViewBag.Message
+                    </div>
+                }
+            </div>
+        </fieldset>
+        }
+    </div>
+</div>
+
+@*<script type="text/javascript">
+    $(function () {
+        $("#btnCaptchaAudio").click(function () {
+            GetCaptchaAudio();
+        });
+    });
+    function GetCaptchaAudio() {
+        $.getJSON('/HttpHandler/CaptchaAudioHandler.ashx', function (result) {
+        });
+    }
+</script>*@
