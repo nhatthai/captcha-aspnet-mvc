@@ -26,9 +26,9 @@ namespace Captcha.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult FeedbackForm(FeedbackModel model, string captchaText)
-        //string captchaText)
         {
             var captchaTextSession = this.Session["CaptchaImageText"].ToString();
+
             if (captchaTextSession.Equals(captchaText))
             {
                 ViewBag.Message = "Captcha Validation Success!";
@@ -43,7 +43,8 @@ namespace Captcha.Controllers
 
         // This action for get Captcha Image
         [HttpGet]
-        [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")] // This is for output cache false
+        // This is for output cache false
+        [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")] 
         public FileResult GetCaptchaImage()
         {
             CaptchaRandomImage CI = new CaptchaRandomImage();
@@ -52,9 +53,9 @@ namespace Captcha.Controllers
             //CI.GenerateImage(this.Session["CaptchaImageText"].ToString(), 300, 75);
             // Or We can use another one for get custom color Captcha Image
             var captchaText = CI.GetRandomString(5);
+
             this.Session["CaptchaImageText"] = captchaText.ToLower();
-            //HttpContext.Session["CaptchaImageText"] = captchaText;
-           
+
             CI.GenerateImage(this.Session["CaptchaImageText"].ToString(), 300, 75, Color.DarkGray, Color.White);
 
             MemoryStream stream = new MemoryStream();
@@ -67,21 +68,24 @@ namespace Captcha.Controllers
         [HttpGet]
         public async Task<ActionResult> GetCaptchaAudio()
         {
+            Task.Run(() => ReadCaptcha(captchaText));
+
+            return null;
+        }
+
+        private void ReadCaptcha(string captchaText)
+        {
             // Initialize a new instance of the SpeechSynthesizer.
             SpeechSynthesizer synth = new SpeechSynthesizer
             {
                 Rate = -7
             };
+
             // Configure the audio output.
             synth.SetOutputToDefaultAudioDevice();
 
-            var captchaText = this.Session["CaptchaImageText"].ToString();
-
             // Speak a string.
             synth.SpeakAsync(captchaText);
-
-            // Need to return none
-            return View("../Home/Index");
         }
     }
 }
